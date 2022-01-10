@@ -1,5 +1,7 @@
 import 'package:chat/models/user.dart';
+import 'package:chat/services/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class UsersPage extends StatefulWidget {
@@ -14,27 +16,34 @@ class _UsersPageState extends State<UsersPage> {
       RefreshController(initialRefresh: false);
 
   final users = [
-    User(isOnline: true, name: 'name1', email: 'name1@test.com', uuid: '1'),
-    User(isOnline: false, name: 'name2', email: 'name2@test.com', uuid: '2'),
-    User(isOnline: true, name: 'name3', email: 'name3@test.com', uuid: '3'),
-    User(isOnline: false, name: 'name4', email: 'name4@test.com', uuid: '4'),
-    User(isOnline: true, name: 'name5', email: 'name5@test.com', uuid: '5'),
-    User(isOnline: false, name: 'name6', email: 'name6@test.com', uuid: '6')
+    User(online: true, name: 'name1', email: 'name1@test.com', uid: '1'),
+    User(online: false, name: 'name2', email: 'name2@test.com', uid: '2'),
+    User(online: true, name: 'name3', email: 'name3@test.com', uid: '3'),
+    User(online: false, name: 'name4', email: 'name4@test.com', uid: '4'),
+    User(online: true, name: 'name5', email: 'name5@test.com', uid: '5'),
+    User(online: false, name: 'name6', email: 'name6@test.com', uid: '6')
   ];
 
   @override
   Widget build(BuildContext context) {
+
+    final authService = Provider.of<AuthService>(context);
+    final user = authService.user;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Users',
-          style: TextStyle(color: Colors.black54),
+        title: Text(
+          user!.name,
+          style: const TextStyle(color: Colors.black54),
         ),
         backgroundColor: Colors.white,
         elevation: 3,
         leading: IconButton(
           icon: const Icon(Icons.exit_to_app, color: Colors.black54),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, 'login');
+            AuthService.deleteToken();
+          },
         ),
         actions: [
           Container(
@@ -80,7 +89,7 @@ class _UsersPageState extends State<UsersPage> {
       ),
       trailing: Icon(
         Icons.circle,
-        color: user.isOnline ? Colors.green : Colors.redAccent,
+        color: user.online! ? Colors.green : Colors.redAccent,
         size: 15,
       ),
     );

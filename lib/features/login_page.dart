@@ -1,9 +1,12 @@
+import 'package:chat/helpers/show_alert.dart';
+import 'package:chat/services/auth_service.dart';
 import 'package:chat/widgets/blue_button.dart';
 import 'package:chat/widgets/custom_input.dart';
 import 'package:chat/widgets/login_labels.dart';
 import 'package:chat/widgets/login_logo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -55,6 +58,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50.0),
       child: SizedBox(
@@ -76,10 +81,29 @@ class __FormState extends State<_Form> {
             ),
             BlueButton(
               title: 'login',
-              onPressed: () {
-                print(emailController.text);
-                print(passwordController.text);
-              },
+              onPressed: authService.onAuth
+                  ? null
+                  : () async {
+                      print(emailController.text);
+                      print(passwordController.text);
+
+                      final success = await authService.login(
+                        emailController.text.trim(),
+                        passwordController.text.trim(),
+                      );
+
+                      if (success) {
+                        Navigator.pushReplacementNamed(context, 'users');
+                      } else {
+                        showAlert(
+                          context,
+                          'Login Error',
+                          'Invalid email or password',
+                        );
+                      }
+
+                      FocusScope.of(context).unfocus();
+                    },
             ),
           ],
         ),

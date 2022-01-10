@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class BlueButton extends StatelessWidget {
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String title;
 
   const BlueButton({Key? key, required this.onPressed, required this.title}) : super(key: key);
